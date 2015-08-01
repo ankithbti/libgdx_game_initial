@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="28">
+ <tileset firstgid="1" name="newMarioGameSprite" tilewidth="32" tileheight="32">
+  <image source="newMarioGameSprite.png" width="512" height="512"/>
+ </tileset>
+ <layer name="Background" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJwLZmBgEB4AHDxq76i9o/aO2jtq76i9o/aO2ksHewcCAwB8tTjJ
+  </data>
+ </layer>
+ <layer name="Ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYKA/cBsAO0ftHbV31N5Re0ftHbV31N6RZ6/YAGEAGdcHxw==
+  </data>
+ </layer>
+ <objectgroup name="GroundBounds">
+  <object id="1" x="33.3333" y="2.66667">
+   <polyline points="0,0 -1.33333,608 928,608"/>
+  </object>
+  <object id="27" x="930.667" y="6.66667">
+   <polyline points="0,0 -1.33333,606.667"/>
+  </object>
+ </objectgroup>
+ <objectgroup name="Coins">
+  <object id="4" x="241.333" y="516">
+   <ellipse/>
+  </object>
+  <object id="5" x="410.667" y="446.667">
+   <ellipse/>
+  </object>
+  <object id="6" x="501.333" y="384">
+   <ellipse/>
+  </object>
+  <object id="7" x="553.333" y="492">
+   <ellipse/>
+  </object>
+  <object id="8" x="448" y="518.667">
+   <ellipse/>
+  </object>
+  <object id="9" x="330.667" y="374.667">
+   <ellipse/>
+  </object>
+  <object id="10" x="714.667" y="386.667">
+   <ellipse/>
+  </object>
+  <object id="11" x="718.667" y="504">
+   <ellipse/>
+  </object>
+  <object id="12" x="593.333" y="318.667">
+   <ellipse/>
+  </object>
+  <object id="13" x="844" y="342.667">
+   <ellipse/>
+  </object>
+  <object id="14" x="849.333" y="458.667">
+   <ellipse/>
+  </object>
+  <object id="20" name="Coin" x="201.333" y="324">
+   <ellipse/>
+  </object>
+  <object id="23" x="160" y="428">
+   <ellipse/>
+  </object>
+  <object id="24" x="105.333" y="502.667">
+   <ellipse/>
+  </object>
+  <object id="25" x="414.667" y="265.333">
+   <ellipse/>
+  </object>
+  <object id="26" x="442.667" y="182.667">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>
