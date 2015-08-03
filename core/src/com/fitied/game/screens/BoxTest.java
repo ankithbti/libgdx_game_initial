@@ -12,7 +12,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -24,6 +26,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -32,10 +35,17 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.fitied.game.Application;
 import com.fitied.game.actors.Box2dSprite;
 import com.fitied.game.actors.Coin;
@@ -53,6 +63,9 @@ public class BoxTest implements Screen, InputProcessor {
 	private Body _platform;
 	private Body _fakePlatform;
 	private float _playerSpeed;
+
+	private Skin _skin;
+	private Stage _stage;
 
 	private TiledMap _map;
 	private OrthoCachedTiledMapRenderer _mapRenderer;
@@ -72,6 +85,8 @@ public class BoxTest implements Screen, InputProcessor {
 	private final static int BUTTON_LEFT = 0;
 	private final static int BUTTON_RIGHT = 1;
 	private final static int BUTTON_UP = 2;
+
+	private TextButton _backButton;
 
 	public BoxTest(final Application app) {
 		_app = app;
@@ -95,10 +110,17 @@ public class BoxTest implements Screen, InputProcessor {
 
 		_coinSprites = new Array<Coin>();
 
+		_stage = new Stage(new FitViewport(_app.VIEWPORT_WIDTH, _app.VIEWPORT_HEIGHT, _app._camera));
+
 	}
 
 	@Override
 	public void show() {
+
+		_skin = new Skin();
+		_skin.addRegions(_app._assetManager.get("ui/uiskin.atlas", TextureAtlas.class));
+		_skin.add("default-font", _app._font);
+		_skin.load(Gdx.files.internal("ui/uiskin.json"));
 
 		_playerSprite = new Player(_app, createPlayer(200, 400, 45, 80, false, true, false, Constants.TYPE_BOX,
 				(short) (Constants.TYPE_PLATFORM | Constants.TYPE_WALL | Constants.TYPE_COINS), (short) 0));
@@ -112,8 +134,28 @@ public class BoxTest implements Screen, InputProcessor {
 		_coinCollectedSound = _app._assetManager.get("sound/mario_coin.wav", Sound.class);
 
 		_backgroundMusic.setVolume(0.5f);
+		
 		Gdx.input.setInputProcessor(this);
+
 		// _backgroundMusic.play();
+
+		_backButton = new TextButton("Back", _skin);
+		_backButton.setPosition(400,350);
+		_backButton.setSize(100, 50);
+		_backButton.addAction(Actions.sequence(Actions.alpha(0f),
+				Actions.parallel(Actions.fadeIn(0.5f), Actions.moveBy(0f, -20f, 0.5f, Interpolation.pow5Out))));
+
+		_backButton.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent e, float x, float y) {
+				Gdx.app.exit();
+			}
+
+		});
+
+		_stage.addActor(_backButton);
+
 	}
 
 	@Override
@@ -123,6 +165,11 @@ public class BoxTest implements Screen, InputProcessor {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		_stateTime += Gdx.graphics.getDeltaTime();
 		update(Gdx.graphics.getDeltaTime());
+		
+		_stage.act(delta);
+		
+		
+		
 		if (_stateTime >= Constants.STEP) {
 			_stateTime -= Constants.STEP;
 
@@ -142,7 +189,7 @@ public class BoxTest implements Screen, InputProcessor {
 			_app._box2dCam.update();
 
 			// Draw Coins
-			for(Coin c : _coinSprites){
+			for (Coin c : _coinSprites) {
 				c.render(_app._batch);
 			}
 
@@ -153,14 +200,18 @@ public class BoxTest implements Screen, InputProcessor {
 			_app._batch.setProjectionMatrix(_app._textCamera.combined);
 			_app._batch.begin();
 			_app._font.setColor(Color.GREEN);
-			_app._font.draw(_app._batch, " FPS: " + Gdx.graphics.getFramesPerSecond() + " , Coins: " + _playerSprite.getCoinsCount(), 10,
+			_app._font.draw(_app._batch,
+					" FPS: " + Gdx.graphics.getFramesPerSecond() + " , Coins: " + _playerSprite.getCoinsCount(), 10,
 					400);
 			_app._batch.end();
+			
+			// Draw Stage
+			_stage.draw();
 		}
 
 	}
-	
-	public void incrementCoinCollectedCount(){
+
+	public void incrementCoinCollectedCount() {
 		_playerSprite.collectedCoin();
 		// Play Sound
 		_coinCollectedSound.play(0.5f);
@@ -281,7 +332,13 @@ public class BoxTest implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		Vector3 touchAt = new Vector3(screenX, screenY, 0);
+		_app._camera.unproject(touchAt);
+		if(touchAt.x > _backButton.getX() && touchAt.x < (_backButton.getX() + _backButton.getWidth())){
+			if(touchAt.y > _backButton.getY() && touchAt.y < (_backButton.getY() + _backButton.getHeight())){
+				_app.setScreen(_app._mainMenuScreen);
+			}
+		}
 		return false;
 	}
 

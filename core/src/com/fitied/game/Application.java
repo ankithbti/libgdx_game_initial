@@ -23,6 +23,7 @@ import com.fitied.game.screens.LoadingScreen;
 import com.fitied.game.screens.MainMenuScreen;
 import com.fitied.game.screens.PlayScreen;
 import com.fitied.game.screens.SplashScreen;
+import com.fitied.game.screens.TestStageScene;
 import com.fitied.game.utils.Constants;
 import com.fitied.game.utils.MyContactListener;
 
@@ -32,8 +33,8 @@ public class Application extends Game {
 	public static final float M2P = 30.0f;
 	public static final float P2M = 1 / M2P;
 	public static final float TIME_ITERATION = 1 / 60.0f;
-	public static final int VIEWPORT_WIDTH = 480;
-	public static final int VIEWPORT_HEIGHT = 420;
+	public static final int VIEWPORT_WIDTH = 600;
+	public static final int VIEWPORT_HEIGHT = 400;
 
 	public OrthographicCamera _camera;
 	public OrthographicCamera _box2dCam;
@@ -47,6 +48,7 @@ public class Application extends Game {
 	public MainMenuScreen _mainMenuScreen;
 	public PlayScreen _playScreen;
 	public BoxTest _box2dScreen;
+	public TestStageScene _testStageScreen;
 
 	public World _world;
 	public Box2DDebugRenderer _worldDebugRenderer;
@@ -75,6 +77,7 @@ public class Application extends Game {
 		_mainMenuScreen = new MainMenuScreen(this);
 		_playScreen = new PlayScreen(this);
 		_box2dScreen = new BoxTest(this);
+		_testStageScreen = new TestStageScene(this);
 
 		initFonts();
 
@@ -121,7 +124,8 @@ public class Application extends Game {
 		// _splashScreen.dispose();
 		// _mainMenuScreen.dispose();
 		// _playScreen.dispose();
-		_box2dScreen.dispose();
+		//_box2dScreen.dispose();
+		_testStageScreen.dispose();
 		_batch.dispose();
 		_assetManager.dispose();
 
